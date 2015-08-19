@@ -1,118 +1,94 @@
+# config.mk
 #
-# Copyright (C) 2011 The Android Open-Source Project
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#      http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
+# Product-specific compile-time definitions.
 #
 
-# These two variables are set first, so they can be overridden
-# by BoardConfigVendor.mk
-BOARD_USES_GENERIC_AUDIO := true
+# The generic product target doesn't have any hardware-specific pieces.
+TARGET_NO_BOOTLOADER := true
+TARGET_NO_KERNEL := true
+TARGET_ARCH := arm64
 
-# Default values, possibly overridden by BoardConfigVendor.mk
-TARGET_BOARD_INFO_FILE := device/samsung/manta/board-info.txt
-BOARD_BLUETOOTH_BDROID_BUILDCFG_INCLUDE_DIR := device/samsung/manta/bluetooth
-
-# Use the non-open-source parts, if they're present
--include vendor/samsung/manta/BoardConfigVendor.mk
-
+# Note: we build the platform images for ARMv7-A _without_ NEON.
+#
+# Technically, the emulator supports ARMv7-A _and_ NEON instructions, but
+# emulated NEON code paths typically ends up 2x slower than the normal C code
+# it is supposed to replace (unlike on real devices where it is 2x to 3x
+# faster).
+#
+# What this means is that the platform image will not use NEON code paths
+# that are slower to emulate. On the other hand, it is possible to emulate
+# application code generated with the NDK that uses NEON in the emulator.
+#
+TARGET_ARCH_VARIANT := armv8-a
+TARGET_CPU_VARIANT := generic
 TARGET_CPU_ABI := armeabi-v7a
 TARGET_CPU_ABI2 := armeabi
-TARGET_CPU_SMP := true
-TARGET_ARCH := arm
-TARGET_ARCH_VARIANT := armv7-a-neon
-TARGET_CPU_VARIANT := cortex-a15
 
-# Define kernel config for inline building
-#TARGET_KERNEL_CONFIG := manta_defconfig
-TARGET_KERNEL_CONFIG := omni_manta_defconfig
-TARGET_KERNEL_SOURCE := kernel/samsung/manta
+HAVE_HTC_AUDIO_DRIVER := true
+BOARD_USES_GENERIC_AUDIO := true
 
-#Bluetooth
-BOARD_HAVE_BLUETOOTH := true
-BOARD_HAVE_BLUETOOTH_BCM := true
+# no hardware camera
+USE_CAMERA_STUB := true
 
-TARGET_NO_BOOTLOADER := true
+# Enable dex-preoptimization to speed up the first boot sequence
+# of an SDK AVD. Note that this operation only works on Linux for now
+ifeq ($(HOST_OS),linux)
+  ifeq ($(WITH_DEXPREOPT),)
+    WITH_DEXPREOPT := true
+  endif
+endif
 
-TARGET_NO_RADIOIMAGE := true
-TARGET_BOARD_PLATFORM := exynos5
-TARGET_BOOTLOADER_BOARD_NAME := manta
+# Build OpenGLES emulation guest and host libraries
+BUILD_EMULATOR_OPENGL := true
 
-BOARD_EGL_CFG := device/samsung/manta/egl.cfg
-
-OVERRIDE_RS_DRIVER := libRSDriverArm.so
-
-#BOARD_USES_HGL := true
-#BOARD_USES_OVERLAY := true
+# Build and enable the OpenGL ES View renderer. When running on the emulator,
+# the GLES renderer disables itself if host GL acceleration isn't available.
 USE_OPENGL_RENDERER := true
-NUM_FRAMEBUFFER_SURFACE_BUFFERS := 3
 
-TARGET_RECOVERY_FSTAB = device/samsung/manta/fstab.manta
+# Set the phase offset of the system's vsync event relative to the hardware
+# vsync. The system's vsync event drives Choreographer and SurfaceFlinger's
+# rendering. This value is the number of nanoseconds after the hardware vsync
+# that the system vsync event will occur.
+#
+# This phase offset allows adjustment of the minimum latency from application
+# wake-up (by Choregographer) time to the time at which the resulting window
+# image is displayed.  This value may be either positive (after the HW vsync)
+# or negative (before the HW vsync).  Setting it to 0 will result in a
+# minimum latency of two vsync periods because the app and SurfaceFlinger
+# will run just after the HW vsync.  Setting it to a positive number will
+# result in the minimum latency being:
+#
+#     (2 * VSYNC_PERIOD - (vsyncPhaseOffsetNs % VSYNC_PERIOD))
+#
+# Note that reducing this latency makes it more likely for the applications
+# to not have their window content image ready in time.  When this happens
+# the latency will end up being an additional vsync period, and animations
+# will hiccup.  Therefore, this latency should be tuned somewhat
+# conservatively (or at least with awareness of the trade-off being made).
+VSYNC_EVENT_PHASE_OFFSET_NS := 0
+
 TARGET_USERIMAGES_USE_EXT4 := true
-BOARD_SYSTEMIMAGE_PARTITION_SIZE := 685768704
-# Disable journaling on system.img to save space.
-BOARD_SYSTEMIMAGE_JOURNAL_SIZE := 0
-BOARD_USERDATAIMAGE_PARTITION_SIZE := 14273216512
-BOARD_CACHEIMAGE_PARTITION_SIZE := 553648128
+BOARD_SYSTEMIMAGE_PARTITION_SIZE := 576716800
+BOARD_USERDATAIMAGE_PARTITION_SIZE := 576716800
+BOARD_CACHEIMAGE_PARTITION_SIZE := 69206016
 BOARD_CACHEIMAGE_FILE_SYSTEM_TYPE := ext4
-BOARD_FLASH_BLOCK_SIZE := 4096
+BOARD_FLASH_BLOCK_SIZE := 512
+TARGET_USERIMAGES_SPARSE_EXT_DISABLED := true
 
-#TARGET_PROVIDES_INIT_RC := true
-#TARGET_USERIMAGES_SPARSE_EXT_DISABLED := true
-
-# Wifi related defines
-BOARD_WPA_SUPPLICANT_DRIVER := NL80211
-WPA_SUPPLICANT_VERSION      := VER_0_8_X
-BOARD_WPA_SUPPLICANT_PRIVATE_LIB := lib_driver_cmd_bcmdhd
-BOARD_HOSTAPD_DRIVER        := NL80211
-BOARD_HOSTAPD_PRIVATE_LIB   := lib_driver_cmd_bcmdhd
-BOARD_WLAN_DEVICE           := bcmdhd
-WIFI_DRIVER_FW_PATH_PARAM   := "/sys/module/bcmdhd/parameters/firmware_path"
-WIFI_DRIVER_FW_PATH_STA     := "/vendor/firmware/fw_bcmdhd.bin"
-WIFI_DRIVER_FW_PATH_AP      := "/vendor/firmware/fw_bcmdhd_apsta.bin"
-
-BOARD_HAL_STATIC_LIBRARIES := libhealthd.manta libdumpstate.manta
-
-BOARD_CHARGER_DISABLE_INIT_BLANK := true
-
-#TARGET_RECOVERY_UPDATER_LIBS += librecovery_updater_manta
-TARGET_RELEASETOOLS_EXTENSIONS := device/samsung/manta
-
-#TWRP
-TARGET_PREBUILT_KERNEL := device/samsung/manta/kernel
-#TARGET_RECOVERY_UI_LIB := librecovery_ui_manta
-TARGET_RECOVERY_UPDATER_LIBS += librecovery_updater_manta
-TARGET_RECOVERY_PIXEL_FORMAT := RGBX_8888
-TW_THEME := landscape_hdpi
-BOARD_USE_CUSTOM_RECOVERY_FONT := \"roboto_23x41.h\"
-RECOVERY_SDCARD_ON_DATA := true
-TW_CUSTOM_BATTERY_PATH := /
-TW_INCLUDE_CRYPTO := true
-TW_NO_CPU_TEMP := true
-
-BOARD_SEPOLICY_DIRS += \
-	device/samsung/manta/sepolicy
-
+BOARD_SEPOLICY_DIRS += build/target/board/generic/sepolicy
 BOARD_SEPOLICY_UNION += \
-	file_contexts \
-	device.te \
-	domain.te \
-	drmserver.te \
-	healthd.te \
-	gpsd.te \
-	file.te \
-	mediaserver.te \
-	system_server.te
+        bootanim.te \
+        device.te \
+        domain.te \
+        file.te \
+        file_contexts \
+        qemud.te \
+        rild.te \
+        shell.te \
+        surfaceflinger.te \
+        system_server.te
 
-MALLOC_IMPL := dlmalloc
-
-BOARD_INV_LIBMLLITE_FROM_SOURCE := true
+ifeq ($(TARGET_PRODUCT),sdk)
+  # include an expanded selection of fonts for the SDK.
+  EXTENDED_FONT_FOOTPRINT := false
+endif
