@@ -1,0 +1,7 @@
+= NOTES for valir version
+
+Features not available:
+
+* Cryptable partitions
+
+
