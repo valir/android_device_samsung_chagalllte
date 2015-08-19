@@ -14,11 +14,11 @@
 
 #
 # This file is the build configuration for a full Android
-# build for manta hardware. This cleanly combines a set of
+# build for chagalllte hardware. This cleanly combines a set of
 # device-specific aspects (drivers) with a device-agnostic
 # product configuration (apps). Except for a few implementation
 # details, it only fundamentally contains two inherit-product
-# lines, full and manta, hence its name.
+# lines, full and chagalllte, hence its name.
 #
 
 # Live Wallpapers
@@ -38,7 +38,7 @@ TARGET_BOOTANIMATION_SIZE := 720x480
 # Inherit from our custom product configuration
 $(call inherit-product, vendor/omni/config/common_tablet.mk)
 # Inherit from hardware-specific part of the product configuration
-$(call inherit-product, device/samsung/manta/device.mk)
+$(call inherit-product, device/samsung/chagalllte/device.mk)
 
 
 PRODUCT_NAME := omni_chagalllte
@@ -48,4 +48,4 @@ PRODUCT_MODEL := Galaxy Tab S 10.5
 PRODUCT_MANUFACTURER := Samsung
 PRODUCT_RESTRICT_VENDOR_FILES := false
 
-$(call inherit-product-if-exists, vendor/samsung/manta/chagalllte-vendor.mk)
+$(call inherit-product-if-exists, vendor/samsung/chagalllte/chagalllte-vendor.mk)

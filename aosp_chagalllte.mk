@@ -13,6 +13,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-$(call inherit-product, device/samsung/manta/full_manta.mk)
+$(call inherit-product, device/samsung/manta/full_chagalllte.mk)
 
-PRODUCT_NAME := aosp_manta
+PRODUCT_NAME := aosp_chagalllte

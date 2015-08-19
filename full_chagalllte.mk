@@ -14,11 +14,11 @@
 
 #
 # This file is the build configuration for a full Android
-# build for manta hardware. This cleanly combines a set of
+# build for chagalllte hardware. This cleanly combines a set of
 # device-specific aspects (drivers) with a device-agnostic
 # product configuration (apps). Except for a few implementation
 # details, it only fundamentally contains two inherit-product
-# lines, full and manta, hence its name.
+# lines, full and chagalllte, hence its name.
 #
 
 # Live Wallpapers
@@ -35,11 +35,11 @@ PRODUCT_PROPERTY_OVERRIDES := \
 
 # Inherit from those products. Most specific first.
 $(call inherit-product, $(SRC_TARGET_DIR)/product/aosp_base.mk)
-$(call inherit-product, device/samsung/manta/device.mk)
+$(call inherit-product, device/samsung/chagalllte/device.mk)
 
-PRODUCT_NAME := full_manta
-PRODUCT_DEVICE := manta
+PRODUCT_NAME := full_chagalllte
+PRODUCT_DEVICE := chagalllte
 PRODUCT_BRAND := Android
-PRODUCT_MODEL := AOSP on Manta
+PRODUCT_MODEL := AOSP on Galaxy Tab S 10.5
 PRODUCT_MANUFACTURER := Samsung
 PRODUCT_RESTRICT_VENDOR_FILES := owner path

@@ -14,4 +14,4 @@
 # limitations under the License.
 #
 
-PRODUCT_MAKEFILES := $(LOCAL_DIR)/full_manta.mk $(LOCAL_DIR)/aosp_manta.mk $(LOCAL_DIR)/omni_manta.mk
+PRODUCT_MAKEFILES := $(LOCAL_DIR)/full_chagalllte.mk $(LOCAL_DIR)/aosp_chagalllte.mk $(LOCAL_DIR)/omni_chagalllte.mk
