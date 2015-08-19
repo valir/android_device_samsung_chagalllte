@@ -41,11 +41,11 @@ $(call inherit-product, vendor/omni/config/common_tablet.mk)
 $(call inherit-product, device/samsung/manta/device.mk)
 
 
-PRODUCT_NAME := omni_manta
-PRODUCT_DEVICE := manta
+PRODUCT_NAME := omni_chagalllte
+PRODUCT_DEVICE := chagalllte
 PRODUCT_BRAND := Android
-PRODUCT_MODEL := Nexus 10
+PRODUCT_MODEL := Galaxy Tab S 10.5
 PRODUCT_MANUFACTURER := Samsung
 PRODUCT_RESTRICT_VENDOR_FILES := false
 
-$(call inherit-product-if-exists, vendor/samsung/manta/manta-vendor.mk)
+$(call inherit-product-if-exists, vendor/samsung/manta/chagalllte-vendor.mk)
